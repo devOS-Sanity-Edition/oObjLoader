@@ -1,0 +1,23 @@
+plugins {
+    id 'java'
+}
+
+group 'com.owens'
+version '1.0-alpha.1'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    //lol none
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+test {
+    useJUnitPlatform()
+}

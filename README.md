@@ -1,3 +1,6 @@
+This is a modified version of oObjLoader with LWJGL stripped out for the use of Tanuki Engine.
+
+# Original Readme:
 == INTRO ==
 
 This is a java library for parsing and loading WaveFront .OBJ files.
