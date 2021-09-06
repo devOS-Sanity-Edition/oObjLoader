@@ -9,26 +9,21 @@ package com.owens.oobjloader.builder;
 // In addition this code may also be used under the "unlicense" described
 // at http://unlicense.org/ .  See the file UNLICENSE in the repo.
 
-import java.util.*;
-import java.text.*;
-import java.io.*;
-import java.io.IOException;
-
 public class VertexTexture {
-
-    public float u = 0;
-    public float v = 0;
-
-    VertexTexture(float u, float v) {
-        this.u = u;
-        this.v = v;
-    }
-
-    public String toString() {
-        if (null == this) {
-            return "null";
-        } else {
-            return u + "," + v;
-        }
-    }
+	
+	public float u = 0;
+	public float v = 0;
+	
+	VertexTexture(float u, float v) {
+		this.u = u;
+		this.v = v;
+	}
+	
+	public String toString() {
+		if (null == this) {
+			return "null";
+		} else {
+			return u + "," + v;
+		}
+	}
 }
