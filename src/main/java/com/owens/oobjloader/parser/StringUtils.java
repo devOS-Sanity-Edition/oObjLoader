@@ -9,16 +9,13 @@ package com.owens.oobjloader.parser;
 // In addition this code may also be used under the "unlicense" described
 // at http://unlicense.org/ .  See the file UNLICENSE in the repo.
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.util.ArrayList;
-
-import static java.util.logging.Level.SEVERE;
+import java.util.function.BiConsumer;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 public class StringUtils {
-	private static final Logger log = LogManager.getLogger("String Utils");
-	
 	public static String prettifyPath(String path) {
 		char[] pathArray = path.toCharArray();
 		for (int i = 0; i < pathArray.length; i++) {
@@ -33,8 +30,8 @@ public class StringUtils {
 	// ----------------------------------------------------------------------
 	// String parsing stuff
 	// ----------------------------------------------------------------------
-	public static void printErrMsg(String methodName, String errorMsg, int mCount, char[] message) {
-		log.error(methodName + ": " + errorMsg);
+	public static void printErrMsg(BiConsumer<Level, String> logger, String methodName, String errorMsg, int mCount, char[] message) {
+		logger.accept(Level.SEVERE, methodName + ": " + errorMsg);
 		String msg1 = "ERROR: " + methodName + ": msg=\\";
 		String msg2 = "ERROR: " + methodName + ":      ";
 		for (int loopi = 0; loopi < message.length; loopi++) {
@@ -43,14 +40,14 @@ public class StringUtils {
 		}
 		msg1 = msg1 + "\\";
 		msg2 = msg2 + "^";
-		log.error(msg1);
-		log.error(msg1);
+		logger.accept(Level.SEVERE, msg1);
+		logger.accept(Level.SEVERE, msg1);
 	}
 	
 	// if errMsg != null, then we test if we've run past end of message
 	// and if so, printErrMsg(errMsg), and return -1.  If no error then
 	// we return the mCount indexing the next non-whitespace char.
-	public static int skipWhiteSpace(int mCount, char[] messageChars, String errMsg) {
+	public static int skipWhiteSpace(BiConsumer<Level, String> logger, int mCount, char[] messageChars, String errMsg) {
 		//Skip whitespace
 		while (mCount < messageChars.length) {
 			if (messageChars[mCount] == ' ' || messageChars[mCount] == '\n' || messageChars[mCount] == '\t') {
@@ -61,14 +58,14 @@ public class StringUtils {
 		}
 		if (errMsg != null) {
 			if (mCount >= messageChars.length) {
-				printErrMsg("RString.skipWhiteSpace", errMsg, mCount, messageChars);
+				printErrMsg(logger, "RString.skipWhiteSpace", errMsg, mCount, messageChars);
 				return -1;
 			}
 		}
 		return mCount;
 	}
 	
-	public static float[] parseFloatList(int numFloats, String list, int startIndex) {
+	public static float[] parseFloatList(BiConsumer<Level, String> logger, int numFloats, String list, int startIndex) {
 		if (list == null) {
 			return null;
 		}
@@ -92,7 +89,7 @@ public class StringUtils {
 		
 		while (count < listLength) {
 			// Skip any leading whitespace
-			itemEnd = skipWhiteSpace(count, listChars, null);
+			itemEnd = skipWhiteSpace(logger, count, listChars, null);
 			count = itemEnd;
 			if (count >= listLength) {
 				break;
@@ -117,7 +114,7 @@ public class StringUtils {
 		return returnArray;
 	}
 	
-	public static int[] parseIntList(String list, int startIndex) {
+	public static int[] parseIntList(BiConsumer<Level, String> logger, String list, int startIndex) {
 		if (list == null) {
 			return null;
 		}
@@ -140,7 +137,7 @@ public class StringUtils {
 		
 		while (count < listLength) {
 			// Skip any leading whitespace
-			itemEnd = skipWhiteSpace(count, listChars, null);
+			itemEnd = skipWhiteSpace(logger, count, listChars, null);
 			count = itemEnd;
 			if (count >= listLength) {
 				break;
@@ -218,7 +215,7 @@ public class StringUtils {
 	// couldn't parse face lines if that were the case.  Anyway, at
 	// least my first version of this will assume that there are no
 	// spaces between slashes and numbers.
-	public static int[] parseListVerticeNTuples(String list, int expectedValuesPerTuple) {
+	public static int[] parseListVerticeNTuples(BiConsumer<Level, String> logger, String list, int expectedValuesPerTuple) {
 		if (list == null) {
 			return null;
 		}
@@ -228,7 +225,7 @@ public class StringUtils {
 		
 		//	log.log(INFO, "list=|"+list+"|");
 		
-		String[] vertexStrings = parseWhitespaceList(list);
+		String[] vertexStrings = parseWhitespaceList(logger, list);
 		
 		//	log.log(INFO, "found "+vertexStrings.length+" strings in parseWhitespaceList");
 		
@@ -320,7 +317,7 @@ public class StringUtils {
 		return returnArray;
 	}
 	
-	public static String[] parseWhitespaceList(String list) {
+	public static String[] parseWhitespaceList(BiConsumer<Level, String> logger, String list) {
 		if (list == null) {
 			return null;
 		}
@@ -343,7 +340,7 @@ public class StringUtils {
 		
 		while (count < listChars.length) {
 			// Skip any leading whitespace
-			itemEnd = skipWhiteSpace(count, listChars, null);
+			itemEnd = skipWhiteSpace(logger, count, listChars, null);
 			count = itemEnd;
 			if (count >= listChars.length) {
 				break;

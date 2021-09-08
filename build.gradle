@@ -3,16 +3,14 @@ plugins {
 }
 
 group 'com.owens'
-version '1.0-alpha.3'
+version '1.0-alpha.4'
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.14.1'
-    implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.14.1'
-    implementation group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.11.2'
+    // h
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {

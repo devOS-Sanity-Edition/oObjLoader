@@ -9,10 +9,10 @@ package com.owens.oobjloader.parser;
 // In addition this code may also be used under the "unlicense" described
 // at http://unlicense.org/ .  See the file UNLICENSE in the repo.
 
-import org.apache.logging.log4j.Logger;
+import java.util.function.BiConsumer;
+import java.util.logging.Level;
 
 public interface ObjBuilder {
-	
 	int NO_SMOOTHING_GROUP = 0;
 	int EMPTY_VERTEX_VALUE = Integer.MIN_VALUE;
 	int MTL_KA = 0;
@@ -102,5 +102,5 @@ public interface ObjBuilder {
 	
 	void doneParsingObj(String filename);
 	
-	Logger getLogger();
+	BiConsumer<Level, String> getLoggingCallback();
 }

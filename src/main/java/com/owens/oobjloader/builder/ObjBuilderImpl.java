@@ -10,13 +10,11 @@ package com.owens.oobjloader.builder;
 // at http://unlicense.org/ .  See the file UNLICENSE in the repo.
 
 import com.owens.oobjloader.parser.ObjBuilder;
-import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import static java.util.logging.Level.INFO;
-import static java.util.logging.Level.SEVERE;
+import java.util.function.BiConsumer;
+import java.util.logging.Level;
 
 public class ObjBuilderImpl implements ObjBuilder {
 	
@@ -50,9 +48,13 @@ public class ObjBuilderImpl implements ObjBuilder {
 	private Material currentMap = null;
 	private Material currentMaterialBeingParsed = null;
 	private final Material currentMapBeingParsed = null;
-	private Logger logger;
+	private BiConsumer<Level, String> logger;
 
-	public ObjBuilderImpl(Logger logger) {
+	public ObjBuilderImpl() {
+		this((lvl, error) -> {});
+	}
+	
+	public ObjBuilderImpl(BiConsumer<Level, String> logger) {
 		this.logger = logger;
 	}
 	
@@ -75,11 +77,11 @@ public class ObjBuilderImpl implements ObjBuilder {
 	}
 	
 	public void addPoints(int[] values) {
-		logger.info("@TODO: Got " + values.length + " points in builder, ignoring");
+		logger.accept(Level.INFO, "@TODO: Got " + values.length + " points in builder, ignoring");
 	}
 	
 	public void addLine(int[] values) {
-		logger.info("@TODO: Got a line of " + values.length + " segments in builder, ignoring");
+		logger.accept(Level.INFO, "@TODO: Got a line of " + values.length + " segments in builder, ignoring");
 	}
 	
 	public void addFace(int[] vertexIndices) {
@@ -109,7 +111,7 @@ public class ObjBuilderImpl implements ObjBuilder {
 				// one, so we offset by -1 for the 0-indexed array lists.
 				fv.v = verticesG.get(vertexIndex - 1);
 			} else {
-				logger.error("Index for geometric vertex=" + vertexIndex + " is out of the current range of geometric vertex values 1 to " + verticesG.size() + ", ignoring");
+				logger.accept(Level.SEVERE, "Index for geometric vertex=" + vertexIndex + " is out of the current range of geometric vertex values 1 to " + verticesG.size() + ", ignoring");
 			}
 			
 			vertexIndex = vertexIndices[loopi++];
@@ -124,7 +126,7 @@ public class ObjBuilderImpl implements ObjBuilder {
 					// one, so we offset by -1 for the 0-indexed array lists.
 					fv.t = verticesT.get(vertexIndex - 1);
 				} else {
-					logger.error("Index for texture vertex=" + vertexIndex + " is out of the current range of texture vertex values 1 to " + verticesT.size() + ", ignoring");
+					logger.accept(Level.SEVERE, "Index for texture vertex=" + vertexIndex + " is out of the current range of texture vertex values 1 to " + verticesT.size() + ", ignoring");
 				}
 			}
 			
@@ -140,12 +142,12 @@ public class ObjBuilderImpl implements ObjBuilder {
 					// one, so we offset by -1 for the 0-indexed array lists.
 					fv.n = verticesN.get(vertexIndex - 1);
 				} else {
-					logger.error("Index for vertex normal=" + vertexIndex + " is out of the current range of vertex normal values 1 to " + verticesN.size() + ", ignoring");
+					logger.accept(Level.SEVERE, "Index for vertex normal=" + vertexIndex + " is out of the current range of vertex normal values 1 to " + verticesN.size() + ", ignoring");
 				}
 			}
 			
 			if (fv.v == null) {
-				logger.error("Can't add vertex to face with missing vertex!  Throwing away face.");
+				logger.accept(Level.SEVERE, "Can't add vertex to face with missing vertex!  Throwing away face.");
 				faceErrorCount++;
 				return;
 			}
@@ -314,16 +316,16 @@ public class ObjBuilderImpl implements ObjBuilder {
 	// >     defined. There is no default.
 	public void addMapLib(String[] names) {
 		if (null == names) {
-			logger.error("@TODO: ERROR! Got a maplib line with null names array - blank group line? (i.e. \"g\\n\" ?)");
+			logger.accept(Level.SEVERE, "@TODO: ERROR! Got a maplib line with null names array - blank group line? (i.e. \"g\\n\" ?)");
 			return;
 		}
 		if (names.length == 1) {
-			logger.info("@TODO: Got a maplib line with one name=|" + names[0] + "|");
+			logger.accept(Level.INFO, "@TODO: Got a maplib line with one name=|" + names[0] + "|");
 			return;
 		}
-		logger.info("@TODO: Got a maplib line;");
+		logger.accept(Level.INFO, "@TODO: Got a maplib line;");
 		for (int loopi = 0; loopi < names.length; loopi++) {
-			logger.info("        names[" + loopi + "] = |" + names[loopi] + "|");
+			logger.accept(Level.SEVERE, "        names[" + loopi + "] = |" + names[loopi] + "|");
 		}
 	}
 	
@@ -436,12 +438,12 @@ public class ObjBuilderImpl implements ObjBuilder {
 	public void setD(boolean halo, float factor) {
 		currentMaterialBeingParsed.dHalo = halo;
 		currentMaterialBeingParsed.dFactor = factor;
-		logger.info("@TODO: got a setD call!");
+		logger.accept(Level.INFO, "@TODO: got a setD call!");
 	}
 	
 	public void setNs(float exponent) {
 		currentMaterialBeingParsed.nsExponent = exponent;
-		logger.info("@TODO: got a setNs call!");
+		logger.accept(Level.INFO, "@TODO: got a setNs call!");
 	}
 	
 	public void setSharpness(float value) {
@@ -493,11 +495,11 @@ public class ObjBuilderImpl implements ObjBuilder {
 	}
 	
 	public void doneParsingObj(String filename) {
-		logger.info("Loaded filename '" + filename + "' with " + verticesG.size() + " verticesG, " + verticesT.size() + " verticesT, " + verticesN.size() + " verticesN and " + faces.size() + " faces, of which " + faceTriCount + " triangles, " + faceQuadCount + " quads, and " + facePolyCount + " with more than 4 points, and faces with errors " + faceErrorCount);
+		logger.accept(Level.INFO,"Loaded filename '" + filename + "' with " + verticesG.size() + " verticesG, " + verticesT.size() + " verticesT, " + verticesN.size() + " verticesN and " + faces.size() + " faces, of which " + faceTriCount + " triangles, " + faceQuadCount + " quads, and " + facePolyCount + " with more than 4 points, and faces with errors " + faceErrorCount);
 	}
 	
 	@Override
-	public Logger getLogger() {
+	public BiConsumer<Level, String> getLoggingCallback() {
 		return logger;
 	}
 	
