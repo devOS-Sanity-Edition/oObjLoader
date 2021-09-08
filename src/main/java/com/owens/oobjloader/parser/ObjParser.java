@@ -77,6 +77,7 @@ public class ObjParser {
 		int indexOfLastSlash = path.lastIndexOf('\\');
 		indexOfLastSlash = indexOfLastSlash == -1 ? 0 : indexOfLastSlash;
 		this.path = path.substring(0, indexOfLastSlash);
+		if (!this.path.equals("")) this.path = this.path + "/";
 		String filename = path.substring(indexOfLastSlash);
 		builder.setObjFilename(filename);
 		
